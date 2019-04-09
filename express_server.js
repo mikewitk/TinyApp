@@ -17,7 +17,9 @@ app.get('/urls.json', (req, res) => {
   res.json(urlDatabase);
 });
 
+// when the path matches the string below, the function is executed
 app.get('/hello', (req, res) => {
+  // the respond is now a HTML page
   res.send('<html><body>Hello <b>World</b></body></html>\n')
 });
 
