@@ -10,6 +10,14 @@
 </head>
 <body style="font-size:20px; padding:50px;">
 
+<header>
+    <% include ./partials/_header %>
+</header>
+
+<a href="#">Create New TinyeURL</a>
+
+<h2>My URLs</h2>
+
 <ul>
 <% for (var keyValue in urls) { %>
   <li> <b> <%= keyValue %> </b> - <%= urls[keyValue] %> </li>

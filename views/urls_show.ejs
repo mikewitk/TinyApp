@@ -10,9 +10,18 @@
 </head>
 <body style="font-size:20px; padding:50px;">
 
+<header>
+    <% include ./partials/_header %>
+</header>
+
+<a href="#">Create New TinyeURL</a>
+
+
+
 <% for( var keyValue in longURL) { %>
   <% if (keyValue === shortURL){ %>
-    <li> <b> <%= shortURL %> </b> - <a href=" <%= longURL[keyValue] %> "> <%= longURL[keyValue] %> </li>
+    <h2>TinyURL for <%= longURL[keyValue] %> </h2>
+    <li> <%= shortURL %> </li>
 <% }} %>
 
 
