@@ -11,6 +11,12 @@ app.get('/', (req, res) => {
   res.send("Hello!");
 });
 
+// when the path matches the string below, the function is executed
+app.get('/urls.json', (req, res) => {
+  // the respond STREAM from the request is read until its completion.
+  res.json(urlDatabase);
+});
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`);
 });
