@@ -63,7 +63,13 @@ app.post("/login", (req, res) => {
   console.log(username) ;
   res.cookie('username', username);
   res.redirect("/urls");
-})
+});
+
+//Logout + Cookie Deletion + Redirect
+app.post("/logout", (req, res) => {
+  res.clearCookie('username');
+  res.redirect("/urls");
+});
 
 //ShortURL webpage
 app.get("/urls/:shortURL", (req, res) => {
