@@ -54,6 +54,10 @@ app.post("/urls", (req, res) => {
   res.redirect('/urls/' + URL);
 });
 
+//Login + Redirect
+app.post("/login", (req, res) => {
+  res.cookie('username', req.body.name)
+})
 
 //ShortURL webpage
 app.get("/urls/:shortURL", (req, res) => {
