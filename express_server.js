@@ -23,19 +23,26 @@ app.get("/urls/new", (req, res) => {
 
 //route handler for /urls to pass the URL data to our template
 app.get('/urls', (req, res) => {
+  console.log("/urls working") ;
   let templateVars = {urls: urlDatabase };
   res.render("urls_index", templateVars)
 })
 
+app.post("/urls/:shortURL/delete", (req, res) => {
+  const DeleteShortURL = req.params.shortURL
+  delete urlDatabase.DeleteShortURL;
+  res.redirect('/urls');
+});
+
 app.post("/urls", (req, res) => {
   console.log(req.body);  // Log the POST request body to the console
-  // urlDatabase[req.body] = [req][body][longURL];
   var URL = generateRandomString();
   urlDatabase[URL] = req.body.longURL;
   console.log(urlDatabase);
   // res.send("Ok");         // Respond with 'Ok' (we will replace this)
   res.redirect('/urls/' + URL);
 });
+
 
 //route handler for /urls/:shorURL to pass the shortURL data to our template
 app.get("/urls/:shortURL", (req, res) => {
