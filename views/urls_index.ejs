@@ -14,15 +14,14 @@
     <% include ./partials/_header %>
 </header>
 
-<a href="#">Create New TinyURL2</a>
+<a href="/urls/new">Create New TinyURL2</a>
 
 <h2>My URLs</h2>
 <% for (var keyValue in urls) { %>
 <ul>
-<form method="POST" action="<%= `/urls/${keyValue}/delete` %>">
-  <li> <b> <%= keyValue %> </b> - <%= urls[keyValue] %> <button>Delete</button></li>
+  <li> <b> <%= keyValue %> </b> - <%= urls[keyValue] %> <a href="<%= `/urls/${keyValue}` %>">Edit</a>
+  <form method="POST" action="<%= `/urls/${keyValue}/delete` %>" value="delete"><button>Delete</button></li></form>
 </ul>
-</form>
 <% }; %>
 
 </body>

@@ -14,14 +14,19 @@
     <% include ./partials/_header %>
 </header>
 
-<a href="#">Create New TinyURL</a>
-
-
+<a href="/urls/new">Create New TinyURL</a>
 
 <% for( var keyValue in longURL) { %>
+<form method="POST" action="">
+
+
   <% if (keyValue === shortURL){ %>
-    <h2>TinyURL for <%= longURL[keyValue] %> </h2>
-    <li> <%= shortURL %> </li>
+    <h2>ShortURL: <%= shortURL %> </h2>
+  <label for="longURL">Enter your new URL:</label>
+  <input type="text" name="longURL">
+  <input type="submit" name="Update!">
+
+</form>
 <% }} %>
 
 
