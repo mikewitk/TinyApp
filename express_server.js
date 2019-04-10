@@ -16,41 +16,52 @@ app.get('/', (req, res) => {
   res.send("Hello!");
 });
 
-//route handler to render the form page
+// Create a ShortURL for an URL
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 
-//route handler for /urls to pass the URL data to our template
+// Show all ShortURLs and LongURLs stored
 app.get('/urls', (req, res) => {
-  console.log("/urls working") ;
   let templateVars = {urls: urlDatabase };
   res.render("urls_index", templateVars)
 })
 
+// Delete a ShortURL/LongURL
 app.post("/urls/:shortURL/delete", (req, res) => {
   const DeleteShortURL = req.params.shortURL
-  delete urlDatabase.DeleteShortURL;
+  console.log(typeof DeleteShortURL) ;
+  delete urlDatabase[DeleteShortURL];
+  console.log(urlDatabase) ;
   res.redirect('/urls');
 });
 
+//Update the LongURL
+app.post("/urls/:shortURL", (req, res) => {
+  const updateShortURL = req.params.shortURL
+  const newLongURL = req.body.longURL;
+  for (var sURL in urlDatabase){
+    if (sURL === updateShortURL){
+      urlDatabase[sURL] = newLongURL;
+    }};
+  res.redirect('/urls');
+    });
+
+//Redirect to ShortURL webpage
 app.post("/urls", (req, res) => {
-  console.log(req.body);  // Log the POST request body to the console
   var URL = generateRandomString();
   urlDatabase[URL] = req.body.longURL;
-  console.log(urlDatabase);
-  // res.send("Ok");         // Respond with 'Ok' (we will replace this)
   res.redirect('/urls/' + URL);
 });
 
 
-//route handler for /urls/:shorURL to pass the shortURL data to our template
+//ShortURL webpage
 app.get("/urls/:shortURL", (req, res) => {
   let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase };
   res.render("urls_show", templateVars);
 });
 
-//redirection
+//Redirect to LongURL webpage
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL]
   res.redirect(longURL);
@@ -71,29 +82,3 @@ function generateRandomString() {
 
     return text;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// // when the path matches the string below, the function is executed
-// app.get('/urls.json', (req, res) => {
-//   // the respond STREAM from the request is read until its completion.
-//   res.json(urlDatabase);
-// });
-
-// // when the path matches the string below, the function is executed
-// app.get('/hello', (req, res) => {
-//   // the respond is now a HTML page
-//   res.send('<html><body>Hello <b>World</b></body></html>\n')
-// });
