@@ -3,6 +3,7 @@
 <h1>TinyApp</h1>
 
 <% if ( userID ) { %>
+Logged is as: <%= currentUser['email']  %>
     <form method="POST" action="/logout">
     <button type="submit" class="btn btn-info">Log Out</button>
     </form>
