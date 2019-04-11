@@ -114,11 +114,6 @@ app.post("/login", (req, res) => {
   } else {
     res.status(403).send("Are you sure you have the right info?! Try again")
   }
-
-
-  // const user_id = req.body.name;
-  // res.cookie('user_id', user_id);
-  // res.redirect("/urls");
 });
 
 //Logout + Cookie Deletion + Redirect
