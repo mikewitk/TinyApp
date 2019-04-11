@@ -1,7 +1,7 @@
-var express = require('express');
-var app = express();
-var PORT = 8080; //default port 8080
-var cookieParser = require('cookie-parser');
+const express = require('express');
+const app = express();
+const PORT = 8080; //default port 8080
+const cookieParser = require('cookie-parser');
 
 app.set("view engine", "ejs");
 app.use(cookieParser());
@@ -12,6 +12,18 @@ app.use(bodyParser.urlencoded({extended: true}));
 var urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
+};
+
+const users = {"userRandomID": {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple"
+  },
+ "user2RandomID": {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "funk"
+  }
 };
 
 app.get('/', (req, res) => {
@@ -30,12 +42,28 @@ app.get('/urls', (req, res) => {
   res.render("urls_index", templateVars)
 })
 
+// Registration Page
+app.get("/register", (req, res) => {
+  res.render("urls_register");
+})
+
+// Account Creation Info Storing
+app.post("/register", (req, res) => {
+  if (req.body.email == false || req.body.password == false){
+    res.status(400).send("Please enter both email and password")
+  } else if (searchUserEmail(req.body.email) === true){
+    res.status(400).send("Email already in use")
+  } else {
+  let uniqueID = generateRandomString();
+  users[uniqueID] = {ID: uniqueID, email: req.body.email, password: req.body.password}
+  res.cookie('user_id', uniqueID);
+  res.redirect("/urls");
+}});
+
 // Delete a ShortURL/LongURL
 app.post("/urls/:shortURL/delete", (req, res) => {
   const DeleteShortURL = req.params.shortURL
-  console.log(typeof DeleteShortURL) ;
   delete urlDatabase[DeleteShortURL];
-  console.log(urlDatabase) ;
   res.redirect('/urls');
 });
 
@@ -60,7 +88,6 @@ app.post("/urls", (req, res) => {
 //Login + Redirect + COOKIES
 app.post("/login", (req, res) => {
   const username = req.body.name;
-  console.log(username) ;
   res.cookie('username', username);
   res.redirect("/urls");
 });
@@ -98,4 +125,13 @@ function generateRandomString() {
     text += possible.charAt(Math.floor(Math.random() * possible.length));
 
     return text;
+}
+
+//Seach email on User Database
+function searchUserEmail(emailToSearch) {
+  for (const currentUser in users){
+    if (emailToSearch == users[currentUser]['email']){
+      return true;
+    }
+  }
 }
