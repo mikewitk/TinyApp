@@ -9,9 +9,14 @@ app.use(cookieParser());
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
-var urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+// var urlDatabase = {
+//   "b2xVn2":  "http://www.lighthouselabs.ca",
+//   "9sm5xK": "http://www.google.com"
+// };
+
+const urlDatabase = {
+  b6UTxQ: { longURL: "https://www.tsn.ca", userID: "aJ48lW" },
+  i3BoGr: { longURL: "https://www.google.ca", userID: "aJ48lW" }
 };
 
 const users = {"userRandomID": {
@@ -32,8 +37,13 @@ app.get('/', (req, res) => {
 
 // Create a ShortURL for an URL
 app.get("/urls/new", (req, res) => {
+
+  if (req.cookies["user_id"]){
   let templateVars = {currentUser: users[req.cookies["user_id"]], userID: req.cookies["user_id"]}
   res.render("urls_new", templateVars);
+} else {
+  res.redirect("/login");
+}
 });
 
 // Show all ShortURLs and LongURLs stored
