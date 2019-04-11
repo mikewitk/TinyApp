@@ -38,7 +38,7 @@ app.get("/urls/new", (req, res) => {
 
 // Show all ShortURLs and LongURLs stored
 app.get('/urls', (req, res) => {
-  let templateVars = {currentUser: users[req.cookies["user_id"]], userID: req.cookies["user_id"], urls: urlDatabase };
+  let templateVars = {currentUser: users[req.cookies["user_id"]], urls: urlDatabase, userID: req.cookies["user_id"] };
   res.render("urls_index", templateVars)
 })
 
@@ -54,14 +54,14 @@ app.get("/login", (req, res) => {
 
 //ShortURL webpage
 app.get("/urls/:shortURL", (req, res) => {
-  let templateVars = {currentUser: users[req.cookies["user_id"]], shortURL: req.params.shortURL, longURL: urlDatabase };
+  let templateVars = {currentUser: users[req.cookies["user_id"]], shortURL: req.params.shortURL, longURL: urlDatabase, userID: req.cookies["user_id"] };
   res.render("urls_show", templateVars);
 });
 
 //Redirect to LongURL webpage
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL]
-  let templateVars = { username: req.cookies["username"]};
+  let templateVars = { username: req.cookies["username"], userID: req.cookies["user_id"]};
   res.redirect(longURL);
 });
 
