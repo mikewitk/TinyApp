@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const PORT = 8080; //default port 8080
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcrypt');
 
 app.set("view engine", "ejs");
 app.use(cookieParser());
@@ -37,7 +38,7 @@ app.get('/', (req, res) => {
   res.send("Hello!");
 });
 
-// Create a ShortURL for an URL
+// Create a ShortURL for a URL
 app.get("/urls/new", (req, res) => {
 
   if (req.cookies["user_id"]){
@@ -90,7 +91,9 @@ app.post("/register", (req, res) => {
     res.status(400).send("Email already in use")
   } else {
   let uniqueID = generateRandomString();
-  users[uniqueID] = {id: uniqueID, email: req.body.email, password: req.body.password};
+  let hashedPW = bcrypt.hashSync(req.body.password, 10);
+  users[uniqueID] = {id: uniqueID, email: req.body.email, password: hashedPW};
+  console.log("Registered Hashed PW: ", users[uniqueID]);
   res.cookie('user_id', uniqueID);
   res.redirect("/urls");
 }});
@@ -127,8 +130,8 @@ app.post("/urls", (req, res) => {
 //Login + Redirect + COOKIES
 app.post("/login", (req, res) => {
   const userEmail = req.body.email;
-
   const userPW = req.body.password;
+  console.log("Login Page PW before check: ", userPW) ;
   const checkedID = UserPWVerifier(userEmail, userPW);
   if (checkedID) {
     res.cookie('user_id', checkedID);
@@ -173,7 +176,10 @@ function searchUserInfo(thingToSearch, type) {
 //Check if PW and email match DB
 function UserPWVerifier (email, pw){
   for (var user in users){
-    if ( users[user]['email'] === email && users[user]['password'] === pw ){
+    let comparingPW = users[user]['password'];
+    console.log("DB PW: ", comparingPW) ;
+    console.log("Login Page PW: ", pw) ;
+    if ( (users[user]['email'] === email) && (bcrypt.compareSync(pw, comparingPW)) ){
       const CheckID = users[user]['id'];
       return CheckID;
     }
