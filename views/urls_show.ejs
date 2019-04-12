@@ -16,19 +16,16 @@
 
 <a href="/urls/new">Create New TinyURL</a>
 
-<% for( var keyValue in longURL) { %>
+<% for( var key in urlDatabase) { %>
 <form method="POST" action="">
 
-
-  <% if (keyValue === shortURL){ %>
-    <h2>ShortURL: <%= shortURL %> </h2>
+  <% if ( key === URLkey){ %>
+    <h3>Long URL: <%= urlDatabase[key]['longURL'] %> </h3>
   <label for="longURL">Enter your new URL:</label>
   <input type="text" name="longURL">
   <button type="submit" class="btn btn-info">Update</button>
-
 </form>
 <% }} %>
-
 
 </body>
 </html>
