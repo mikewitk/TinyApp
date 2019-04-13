@@ -14,18 +14,24 @@
     <% include ./partials/_header %>
 </header>
 
+<% if ( userID ){ %>
 <a href="/urls/new">Create New TinyURL</a>
+  <% for( var key in urlDatabase) { %>
+  <form method="POST" action="">
 
-<% for( var key in urlDatabase) { %>
-<form method="POST" action="">
-
-  <% if ( key === URLkey){ %>
-    <h3>Long URL: <%= urlDatabase[key]['longURL'] %> </h3>
-  <label for="longURL">Enter your new URL:</label>
-  <input type="text" name="longURL">
-  <button type="submit" class="btn btn-info">Update</button>
-</form>
-<% }} %>
-
+    <% if ( key === URLkey){ %>
+      <h3>Short URL: <%= key %></h3>
+      <h3>Long URL: <%= urlDatabase[key]['longURL'] %> </h3>
+      <label for="longURL">Update your Long URL:</label>
+      <input type="text" name="longURL">
+      <button type="submit" class="btn btn-info">Update</button>
+  </form>
+    <% } else { %>
+    <% "The short URL you are trying to access does not exist. Please verify the URL and try again." %>
+    <% } %>
+  <% } %>
+<% } else { %>
+    <% return "To be able to edit a TinyApp URL you need to login first. Please visit: localhost:8080/login" %>
+<% } %>
 </body>
 </html>
