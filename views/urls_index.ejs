@@ -18,7 +18,7 @@
 
 <h2>My URLs</h2>
 <% for (var key in urls) { %>
-  <% if (userID === urls[key]['userID']) { %>
+  <% if (userID === urls[key].userID) { %>
 <ul>
   <form method="POST" action="<%= `/urls/${key}/delete` %>" value="delete">
   <li> <b> <%= key %> </b> - <%= urls[key]["longURL"] %> <a href="<%= `/urls/${key}` %>">Edit</a> <button type="submit" class="btn btn-info">Delete</button></li></form>

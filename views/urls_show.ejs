@@ -21,7 +21,7 @@
 
     <% if ( key === URLkey){ %>
       <h3>Short URL: <%= key %></h3>
-      <h3>Long URL: <%= urlDatabase[key]['longURL'] %> </h3>
+      <h3>Long URL: <%= urlDatabase[key].longURL %> </h3>
       <label for="longURL">Update your Long URL:</label>
       <input type="text" name="longURL">
       <button type="submit" class="btn btn-info">Update</button>

@@ -3,6 +3,7 @@ const app = express();
 const PORT = 8080; //default port 8080
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
+const bodyParser = require("body-parser");
 
 app.set("view engine", "ejs");
 app.use(cookieSession({
@@ -12,12 +13,61 @@ app.use(cookieSession({
   // Cookie Options
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }))
-const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
 const urlDatabase = {};
 
 const users = {};
+
+// <---------------------------------------------> \\
+//Generate Random ShortURL
+function generateRandomString() {
+  var text = "";
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  for (var i = 0; i < 6; i++)
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+    return text;
+};
+
+//Seach any user info on User Database
+function searchUserInfo(thingToSearch, type) {
+  for (const currentUser in users){
+    if (thingToSearch == users[currentUser][type]){
+      return true;
+    }
+  }
+};
+
+//Check if PW and email match DB
+function UserPWVerifier (email, pw){
+  for (var user in users){
+    let comparingPW = users[user]['password'];
+    if ( (users[user]['email'] === email) && (bcrypt.compareSync(pw, comparingPW)) ){
+      const CheckID = users[user]['id'];
+      return CheckID;
+    }
+  }
+  return false
+};
+
+// Generate object with user LongURLs and UserID
+// function findUserURL (ID) {
+//   for (let shortURL in urlDatabase) {
+//     if (urlDatabase[shortURL]["userID"] === ID) {
+//       let newObject = urlDatabase[shortURL];
+//     }
+//   }
+// };
+
+function checkURLFix(url) {
+  if(url.match(/^http:/)) {
+    return url;
+  } else {
+    return 'http://' + url;
+  }
+};
+
+// <---------------------------------------------> \\
 
 app.get('/', (req, res) => {
   if (req.session.user_id){
@@ -71,14 +121,14 @@ app.get("/urls/:shortURL", (req, res) => {
 
 //Redirect to LongURL webpage
 app.get("/u/:shortURL", (req, res) => {
-  res.redirect(`http://${urlDatabase[req.params.shortURL]['longURL']}`);
+  res.redirect(`${urlDatabase[req.params.shortURL]['longURL']}`);
 });
 
 // Account Creation Info Storing
 app.post("/register", (req, res) => {
-  if (req.body.email == false || req.body.password == false){
+  if ( !req.body.email || !req.body.password ) {
     res.status(400).send("Please enter both email and password")
-  } else if (searchUserInfo(req.body.email, "email") === true){
+  } else if (searchUserInfo(req.body.email, "email") ) {
     res.status(400).send("Email already in use")
   } else {
     let uniqueID = generateRandomString();
@@ -99,7 +149,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 //Update the LongURL
 app.post("/urls/:shortURL", (req, res) => {
   const updateShortURL = req.params.shortURL
-  const newLongURL = req.body.longURL;
+  const newLongURL = checkURLFix(req.body.longURL);
   const newUserID = req.session.user_id;
   for (var keys in urlDatabase){
     if (keys === updateShortURL){
@@ -112,8 +162,8 @@ app.post("/urls/:shortURL", (req, res) => {
 app.post("/urls", (req, res) => {
   const uniqueID = generateRandomString();
   tempObj = {};
-  tempObj['longURL'] = req.body.longURL;
-  tempObj['userID'] = req.session.user_id;
+  tempObj.longURL = checkURLFix(req.body.longURL);
+  tempObj.userID = req.session.user_id;
   urlDatabase[uniqueID] = tempObj;
   res.redirect('/urls/' + uniqueID);
 });
@@ -143,41 +193,3 @@ app.listen(PORT, () => {
   console.log(`TinyApp webpage is up using port: ${PORT}`);
 });
 
-//Generate Random ShortURL
-function generateRandomString() {
-  var text = "";
-  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  for (var i = 0; i < 6; i++)
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-    return text;
-};
-
-//Seach any user info on User Database
-function searchUserInfo(thingToSearch, type) {
-  for (const currentUser in users){
-    if (thingToSearch == users[currentUser][type]){
-      return true;
-    }
-  }
-};
-
-//Check if PW and email match DB
-function UserPWVerifier (email, pw){
-  for (var user in users){
-    let comparingPW = users[user]['password'];
-    if ( (users[user]['email'] === email) && (bcrypt.compareSync(pw, comparingPW)) ){
-      const CheckID = users[user]['id'];
-      return CheckID;
-    }
-  }
-  return false
-};
-
-// Generate object with user LongURLs and UserID
-function findUserURL (ID) {
-  for (let shortURL in urlDatabase) {
-    if (urlDatabase[shortURL]["userID"] === ID) {
-      let newObject = urlDatabase[shortURL];
-    }
-  }
-};
